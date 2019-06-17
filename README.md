@@ -191,7 +191,7 @@ function paintUI() {
   //repaint the document or UI = > this takes NO time
 }
 
-async init(){
+async function init(){
     await getUsers();   -> looks like synchronous but 'waits'
     paintUI();          -> only when getUsers() is finished
 }
