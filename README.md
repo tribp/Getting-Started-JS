@@ -3,13 +3,10 @@
 TOC:
 
 - 1 Asynchronous calls
+  - 'The problem'
   - Callbacks
   - Promises
   - Async/Await
-- 2
-- 3
-- 4
-- 5
 
 **References:**
 
@@ -23,9 +20,58 @@ A lot of those calls have no dependencies between them and might be run 'paralle
 
 JS was designed with this in mind and treat 'Functions' as **'First class citizens'** (or AKA 'Higher Order functions'), meaning that a function can be passed as an argument to a other function and or even 'return' a function.
 
+**Conclusion**
+
+**The evolution 'plain' callbacks, Promises and async/await is about elegant, simpler an more intuitif 'code'. Behind the scenes the same and core 'callback' functionality remains the same !!!**
+
 **References:**
 
-https://www.youtube.com/watch?v=PoRJizFvM7s
+[Traversery Media](https://www.youtube.com/watch?v=PoRJizFvM7s) <br>[Promises in 10 minutes](https://www.youtube.com/watch?v=DHvZLI7Db8E)
+
+### The Problem
+
+When calling functions, eg to other servers over the internet, we do not know when we get the answers. This causes a problem when in case there is some dependencies or succesive actions.
+
+Example: We need some users from server1 and then we need to update the UI. Typically the call to server1 will take some time but if we paint the screen, it would be empty. The solution is a 'callback' function 'paintUI' that is called after receiving the 'user data' from server1.
+
+**The Problem**
+
+```javascript
+// The problem
+
+function getUsers() {
+  // call to database that takes some time
+}
+function paintUI() {
+  //repaint the document or UI = > this takes NO time
+}
+
+// Actions
+getUsers();
+paintUI();
+// Result will be an empty page
+```
+
+**The solution**
+
+```javascript
+// The solution with a callback
+
+function getUsers(callback) {
+  // call to database that takes some time
+  ...
+  // OK after some time we got the answer from the server
+  // Ready to prod-ceed
+  callback();
+}
+function paintUI() {
+  //repaint the document or UI = > this takes NO time
+}
+
+// Actions
+getUsers(paintUI));
+// Result will show the users !
+```
 
 ### Callbacks
 
@@ -59,6 +105,95 @@ Let A = [1,2,3].map((i)=>i*i)   // A = [1,4,9] where '(i) => i*i' is the callbac
 
 ### Promises
 
-Promises (since ES6) is a more elagant way to get more readable and intuitive code.<br> Before when 'chaining callbacks' where one callback may only start after finishing the former one, this was achieved in
+Promises (since ES6-2015) is a more elagant way to get more readable and intuitive code.<br> Before when 'chaining callbacks' where one callback may only start after finishing the former one, this was achieved in
+
+The Promise is an Object with properties and methods
+
+The mechanism is like in real-life. You make a promise and later ...
+
+ther are 4 states:
+
+- pending
+- fullfilled -> '.then' method will be executed
+- rejected -> '.catch' method will be executed
+
+```javascript
+// The solution with a Promise
+
+function getUsers() {
+    return new Promise((resolve reject)=>{
+        // call to database that takes some time
+        ...
+        // OK after some time we got the answer from the server
+        // Ready to prod-ceed
+        if (!error){
+            resolve();  // we can pass some arguments: eg the users to paintUI
+        } else {
+            reject('Error: something went wrong')
+        }
+  })
+}
+function paintUI() {
+  //repaint the document or UI = > this takes NO time
+}
+
+// Actions
+getUsers().then(paintUI);
+// OK
+```
+
+Extra: Sometime you have multiple Promises going and only want to proceed if everything is finished.
+
+```javascript
+// The solution with a Promise.all
+
+const promise1 = getUsers(paintUI);
+const promise2 = ..
+const promise3 = ...
+
+// Proceed when all promises are returned.
+Promise.all([promise1,promise2,promise3]).then();
+```
 
 <img src="images/HA-docker-check.png" width="800px">
+
+### Async / Await
+
+ES7-2016
+
+While Promises were already much clearer code than callbacks, somethimes it became cumbersome in case of multiple consecutive actions: 'getUsers.then().then().then'
+
+The aim was to write simple (asynchronous) code like if it was synchronous.
+
+- put 'async' before the function to indicate it it asynchronous
+- put 'await' before the function (in the async function) to indicate it has to be finished in order to proceed, as if it was a 'synchronous' statement.
+
+```javascript
+// The solution with a async/awit
+
+function getUsers() {
+    return new Promise((resolve reject)=>{
+        // call to database that takes some time
+        ...
+        // OK after some time we got the answer from the server
+        // Ready to prod-ceed
+        if (!error){
+            resolve();  // we can pass some arguments: eg the users to paintUI
+        } else {
+            reject('Error: something went wrong')
+        }
+  })
+}
+function paintUI() {
+  //repaint the document or UI = > this takes NO time
+}
+
+async init(){
+    await getUsers();   -> looks like synchronous but 'waits'
+    paintUI();          -> only when getUsers() is finished
+}
+
+// Actions
+init();
+// OK
+```
