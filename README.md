@@ -30,7 +30,7 @@ JS was designed with this in mind and treat 'Functions' as **'First class citize
 
 ### The Problem
 
-When calling functions, eg to other servers over the internet, we do not know when we get the answers. This causes a problem when in case there is some dependencies or succesive actions.
+When calling functions, eg to other servers over the internet, we do not know when we get the answers. This causes a problem when in case there are some dependencies or succesive actions.
 
 Example: We need some users from server1 and then we need to update the UI. Typically the call to server1 will take some time but if we paint the screen, it would be empty. The solution is a 'callback' function 'paintUI' that is called after receiving the 'user data' from server1.
 
@@ -105,16 +105,16 @@ Let A = [1,2,3].map((i)=>i*i)   // A = [1,4,9] where '(i) => i*i' is the callbac
 
 ### Promises
 
-Promises (since ES6-2015) is a more elagant way to get more readable and intuitive code.<br> Before when 'chaining callbacks' where one callback may only start after finishing the former one, this was achieved in
+Promises (since ES6-2015) is a more elagant way to get more readable and intuitive code.<br> Before when 'chaining callbacks' where one callback may only start after finishing the former one, this was achieved in chaining them into the functions, resulting in very 'indented code' like a big triangle.
 
 The Promise is an Object with properties and methods
 
 The mechanism is like in real-life. You make a promise and later ...
 
-ther are 4 states:
+ther are 3 states:
 
 - pending
-- fullfilled -> '.then' method will be executed
+- fulfilled -> '.then' method will be executed
 - rejected -> '.catch' method will be executed
 
 ```javascript
@@ -139,6 +139,7 @@ function paintUI() {
 
 // Actions
 getUsers().then(paintUI);
+getUsers().catch(writeToErrorLog)
 // OK
 ```
 
@@ -161,11 +162,13 @@ Promise.all([promise1,promise2,promise3]).then();
 
 ES7-2016
 
-While Promises were already much clearer code than callbacks, somethimes it became cumbersome in case of multiple consecutive actions: 'getUsers.then().then().then'
+While Promises already resulted in much clearer code than callbacks, sometimes it became cumbersome in case of multiple consecutive actions: 'getUsers.then().then().then() etc
 
 The aim was to write simple (asynchronous) code like if it was synchronous.
 
-- put 'async' before the function to indicate it it asynchronous
+**How ?**
+
+- put 'async' before the function to indicate it is asynchronous
 - put 'await' before the function (in the async function) to indicate it has to be finished in order to proceed, as if it was a 'synchronous' statement.
 
 ```javascript
