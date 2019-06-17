@@ -94,8 +94,6 @@ let a = myCalculator(5, 6, add); // a == 11
 let b = myCalculator(8, 10, multiply); // b == 80
 ```
 
-<link src="callback_princilple.js" width="800px">
-
 A more modern example
 
 ```javascript
